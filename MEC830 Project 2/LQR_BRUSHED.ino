@@ -20,23 +20,23 @@
 #define SHAFT_R 0.00637
 
 // Motor constants
-#define POSITION_LIMIT  0.15
+#define POSITION_LIMIT  0.4
 
-#define A 35.98
+#define A 40
 #define B 1
 #define C 1
 
 
-#define Kx  -185.1640
-#define Kth 314.6887
-#define Kv  -108.9983
-#define Kw  45.4043
+#define Kx  0.00
+#define Kth 60
+#define Kv  -40
+#define Kw  -1.5
 
-float Kr = 1;
+float Kr =  5;
 
 
 const float PI2 = 2.0 * PI;
-const float THETA_THRESHOLD = PI/12 ;
+float THETA_THRESHOLD = PI/6;
 
 // Motor driver pins
 Servo motorDriver;    // Use Servo library for PWM control
@@ -130,6 +130,9 @@ void setup() {
   motorDriver.attach(PWM_PIN);  // Attach the Servo library to the motor pin
   Serial.begin(9600);
   lastTimeMicros = micros();
+  pendulumEncoder.write(-1200);
+  motorEncoder.write(((0.5*POSITION_LIMIT)*PENDULUM_ENCODER_PPR)/0.04);
+  delay(3000);
 }
 
 void loop() {
@@ -166,7 +169,7 @@ void loop() {
   u = (control + A * v + copysignf(C, v)) / B;
   u = 500*u/12.0;
   // Read the pendulum encoder value to determine direction
-  driveMotor(saturate(u, 132));  // Saturate to limit motor input within range
+  driveMotor(saturate(u, 147));  // Saturate to limit motor input within range
 } else {
   driveMotor(0);  // If not controllable, stop the motor
 }
